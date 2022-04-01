@@ -6,7 +6,9 @@ const initMongo = require('./mongodb');
 const initCron = require('./cron');
 const app = require('./express');
 
-const extractGuessData = ({ text: message, chat }, { utterance, intent, score }) => ({
+const extractGuessData = ({ text: message, chat }, {
+  utterance, intent, score, answer,
+}) => ({
   id: chat.id,
   message,
   firstName: chat.first_name,
@@ -14,6 +16,7 @@ const extractGuessData = ({ text: message, chat }, { utterance, intent, score })
   utterance,
   intent,
   score,
+  answer,
 });
 
 (async () => {
