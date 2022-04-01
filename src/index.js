@@ -3,6 +3,8 @@ const { Telegraf } = require('telegraf');
 const corpus = require('./corpus-es.json');
 const initNlp = require('./nlp');
 const initMongo = require('./mongodb');
+const initCron = require('./cron');
+const app = require('./express');
 
 const extractGuessData = ({ text: message, chat }, { utterance, intent, score }) => ({
   id: chat.id,
@@ -58,7 +60,10 @@ const extractGuessData = ({ text: message, chat }, { utterance, intent, score })
   });
 
   await bot.launch();
+  await initCron(process.env.APP_URL);
 
   process.once('SIGINT', () => bot.stop('SIGINT'));
   process.once('SIGTERM', () => bot.stop('SIGTERM'));
 })();
+
+app.listen(process.env.PORT);
