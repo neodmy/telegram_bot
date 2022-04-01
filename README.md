@@ -40,12 +40,13 @@ On every message, the app will store information that can be used for further tr
 ```json
 {
   "id": 45930123,
-  "message": "what's you name",
+  "message": "what's your name",
   "firstName": "John",
   "lastName": "Doe",
-  "utterance": "what's you name",
+  "utterance": "what's your name",
   "intent": "agent.name",
-  "score": 1 
+  "score": 1,
+  "answer": "I don't have one yet"
 }
 ```
 
