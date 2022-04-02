@@ -720,6 +720,20 @@
       ]
     },
     {
+      "intent": "user.laugh",
+      "utterances": [
+        "jajaja",
+        "hahaha",
+        "me parto",
+        "me rio",
+        "reir"
+      ],
+      "answers": [
+        "Me alegro que te parezca graciosa",
+        "Verdad que soy graciosa?"
+      ]
+    },
+    {
       "intent": "None",
       "utterances": [],
       "answers": [
