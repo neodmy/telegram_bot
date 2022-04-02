@@ -1,10 +1,12 @@
 require('dotenv').config();
 const { Telegraf } = require('telegraf');
+const fs = require('fs');
+const path = require('path');
 const initNlp = require('./nlp');
 const initMongo = require('./mongodb');
 const initCron = require('./cron');
 const app = require('./express');
-const corpus = require('./example/corpus-es.json');
+const exampleCorpus = require('./example/corpus-es.json');
 
 const extractGuessData = ({ text: message, chat }, {
   utterance, intent, score, answer,
@@ -25,6 +27,8 @@ let cron;
 
 const init = async () => {
   db = await initMongo();
+  const corpus = await db.findCorpus() || exampleCorpus;
+  await fs.writeFileSync(path.join(__dirname, 'corpus.json'), JSON.stringify(corpus, null, 2));
   const nlp = await initNlp();
 
   bot = new Telegraf(process.env.BOT_TOKEN);
