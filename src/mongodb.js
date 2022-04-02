@@ -21,6 +21,8 @@ const init = async () => {
 
   const insertGoodGuess = async (message) => db.collection('guesses_success').insertOne(message);
 
+  const findCorpus = async () => db.collection('corpus').findOne({}, { projection: { _id: 0 } });
+
   const disconnect = () => client.close();
 
   return {
@@ -28,6 +30,7 @@ const init = async () => {
     findOneByChatId,
     insertBadGuess,
     insertGoodGuess,
+    findCorpus,
     disconnect,
   };
 };
