@@ -6,7 +6,8 @@ const init = async () => {
   const connectionString = process.env.MONGODB_CONNECTION_STRING;
   const databaseName = process.env.DATABASE_NAME;
 
-  const db = (await MongoClient.connect(connectionString)).db(databaseName);
+  const client = await MongoClient.connect(connectionString);
+  const db = client.db(databaseName);
 
   const upsertOneByChatId = async (payload) => (await db.collection('chats').findOneAndUpdate(
     { id: payload.id },
@@ -20,11 +21,14 @@ const init = async () => {
 
   const insertGoodGuess = async (message) => db.collection('guesses_success').insertOne(message);
 
+  const disconnect = () => client.close();
+
   return {
     upsertOneByChatId,
     findOneByChatId,
     insertBadGuess,
     insertGoodGuess,
+    disconnect,
   };
 };
 
