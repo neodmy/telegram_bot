@@ -1,10 +1,10 @@
 require('dotenv').config();
 const { Telegraf } = require('telegraf');
-const corpus = require('./corpus-es.json');
 const initNlp = require('./nlp');
 const initMongo = require('./mongodb');
 const initCron = require('./cron');
 const app = require('./express');
+const corpus = require('./example/corpus-es.json');
 
 const extractGuessData = ({ text: message, chat }, {
   utterance, intent, score, answer,
@@ -19,11 +19,15 @@ const extractGuessData = ({ text: message, chat }, {
   answer,
 });
 
-(async () => {
-  const nlp = await initNlp();
-  const db = await initMongo();
+let db;
+let bot;
+let cron;
 
-  const bot = new Telegraf(process.env.BOT_TOKEN);
+const init = async () => {
+  db = await initMongo();
+  const nlp = await initNlp();
+
+  bot = new Telegraf(process.env.BOT_TOKEN);
 
   const fallbackResponse = corpus.data.find(({ intent }) => intent === 'None').answers[0];
 
@@ -63,10 +67,20 @@ const extractGuessData = ({ text: message, chat }, {
   });
 
   await bot.launch();
-  await initCron(process.env.APP_URL);
+  cron = await initCron(process.env.APP_URL);
+};
 
-  process.once('SIGINT', () => bot.stop('SIGINT'));
-  process.once('SIGTERM', () => bot.stop('SIGTERM'));
-})();
+const server = app.listen(process.env.PORT, async () => {
+  await init();
+});
 
-app.listen(process.env.PORT);
+const gracefulShutdown = () => server.close(async () => {
+  bot.stop('SIGINT');
+  cron.stop();
+  await db.disconnect();
+  process.exit(0);
+});
+
+process.once('SIGINT', gracefulShutdown);
+
+process.once('SIGTERM', gracefulShutdown);
