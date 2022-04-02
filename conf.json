@@ -2,7 +2,7 @@
   "settings": {
     "nlp": {
       "corpora": [
-        "./src/corpus-es.json"
+        "./src/corpus.json"
       ]
     }
   },
